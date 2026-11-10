@@ -14,6 +14,8 @@ This modification changes the Nintendo DS button layout when playing Game Boy Ad
 
 The D-pad, L, R, Start and Select retain their original functions. The original physical A and X buttons are not assigned to the GBA A/B functions in this customized layout.
 
+Important: If you download GBARunner3-buttons-changed.nds from this repository, rename it to GBARunner3.nds before installing it.
+
 ## Why did I make this?
 
 I'm simply someone who wanted to play Game Boy Advance games on my Nintendo DSi. However, having the B and Y buttons mapped to GBA A and B was an absolute necessity for me, as I find that layout much more comfortable to use.
