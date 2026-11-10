@@ -1,0 +1,44 @@
+name: Build GBARunner3 B/Y to A/B for DSpico
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitarm:20241104
+    steps:
+      - name: Checkout remapping files
+        uses: actions/checkout@v4
+        with:
+          path: remap
+
+      - name: Checkout upstream Y-to-B fork and submodules
+        uses: actions/checkout@v4
+        with:
+          repository: dhorlick/GBARunner3
+          ref: develop
+          submodules: recursive
+          path: emulator
+
+      - name: Apply B to A and Y to B button remap
+        run: |
+          test -s remap/patches/Input.s.modificado
+          cp remap/patches/Input.s.modificado emulator/code/core/arm9/source/Peripherals/Input.s
+
+      - name: Build Nintendo DS executable
+        run: |
+          make -C emulator/code
+          test -s emulator/code/bootstrap/GBARunner3.nds
+
+      - name: Prepare DSpico package
+        run: |
+          mkdir -p package/_pico/emulators
+          cp emulator/code/bootstrap/GBARunner3.nds package/_pico/emulators/GBARunner3.nds
+          sha256sum package/_pico/emulators/GBARunner3.nds
+
+      - name: Upload compiled .nds
+        uses: actions/upload-artifact@v4
+        with:
+          name: GBARunner3-BY-to-AB-DSi
+          path: package/
