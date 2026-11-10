@@ -37,3 +37,16 @@ This is a personal test result, **not** a guarantee that every game or console m
 
 - **[Gericom](https://github.com/Gericom/GBARunner3)** — Creator and maintainer of the original GBARunner3 project.
 - **[dhorlick](https://github.com/dhorlick/GBARunner3/releases/tag/y2b)** — Author of the experimental Y-to-B modification used as a starting point.
+
+## Build your own `.nds`
+
+If you'd rather build the modified emulator yourself instead of downloading a precompiled file, follow **[BUILD.md](BUILD.md)**. The GitHub Actions workflow uses the [dhorlick Y-to-B fork](https://github.com/dhorlick/GBARunner3) as a base, applies the B/Y-to-A/B modification and compiles the Nintendo DS executable.
+
+## Installation on the tested setup
+
+1. Back up the SD card and the existing `/_pico/emulators/GBARunner3.nds` file.
+2. Copy the modified `GBARunner3.nds` to `/_pico/emulators/` on the DSpico SD card, replacing only that executable.
+3. Launch a GBA game through Pico Launcher and test the buttons.
+4. If it does not work as expected, restore the original `.nds`.
+
+No commercial ROMs, save files or BIOS files are included in this project. The separate `gbarunner3.json` display settings are not changed by this button remap.

@@ -1,0 +1,42 @@
+.section ".itcm", "ax"
+.altmacro
+#include "AsmMacros.inc"
+
+arm_func emu_regKeyInputLoad16
+    mov r10, #0                    @ 16 bits: KEYCNT alto = 0
+    b emu_regKeyInputRemapComun     @ Compartir lectura de botones
+
+arm_func emu_regKeyInputKeyControlLoad32
+    ldr r11, = (emu_ioRegisters + 2)
+    sub r10, r8, #0x04000000
+    ldrh r10, [r11, r10]           @ Guardar KEYCNT real en r10
+
+arm_func emu_regKeyInputRemapComun
+    ldrh r9, [r8]                  @ KEYINPUT (activo en bajo)
+    tst r9, #2                     @ DS B pulsado?
+    orr r9, r9, #3                 @ Desconectar DS A y DS B originales
+    biceq r9, r9, #1               @ DS B -> GBA A
+    ldr r11, =0x027FFC00           @ KEYXY compartido por ARM7
+    ldrh r11, [r11]
+    tst r11, #2                    @ DS Y pulsado?
+    biceq r9, r9, #2               @ DS Y -> GBA B
+    orr r9, r9, r10, lsl #16       @ 32 bits: KEYCNT; 16 bits: cero
+    bx lr
+arm_func emu_regKeyInputKeyControlStore32
+    mov r9, r9, lsr #16
+arm_func emu_regKeyControlStore16
+    ldr r11,= (emu_ioRegisters - 0x04000000)
+    orr r10, r8, #2
+    bic r9, r9, #0x3C00
+    strh r9, [r10]
+    strh r9, [r11, r10]
+
+    // interrupt
+    ldr r12,= vm_hwIrqMask
+    ldr r11, [r12]
+    tst r9, #(1 << 14)
+    biceq r11, r11, #(1 << 12)
+    orrne r11, r11, #(1 << 12)
+    str r11, [r12]
+
+    bx lr
